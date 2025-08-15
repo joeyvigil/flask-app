@@ -1,5 +1,5 @@
 from flask import Flask
-from app.models import db
+from .models import db
 from .extensions import ma
 from .blueprints.users import users_bp
 

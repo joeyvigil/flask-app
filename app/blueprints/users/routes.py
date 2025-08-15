@@ -1,21 +1,13 @@
-from . import users_bp
-
+from app.blueprints.users import users_bp
+from .schemas import user_schema, users_schema
+from flask import request, jsonify
+from marshmallow import  ValidationError
+from app.models import Users, db
 
 #================= CRUD USERS ==============================
 
-@app.route('/message', methods=['GET'])
-def nothing():
-    print("WOW YOU DID IT, Debug Works too?")
-    return jsonify("Returning a message from message"),200
 
-@app.route('/user1', methods=['GET'])
-def user1():
-    data = request.json
-    print(data)
-    return jsonify("this is working"),200
-
-
-@app.route('/user', methods=['POST'])
+@users_bp.route('', methods=['POST'])
 def make_user():
     try:
         data = user_schema.load(request.json) # type: ignore
@@ -30,21 +22,21 @@ def make_user():
 
 
 #endpoint to get user data
-@app.route('/user', methods=['GET'])
+@users_bp.route('', methods=['GET'])
 def read_users():
     users=db.session.query(Users).all()
     print(users)
     return users_schema.jsonify(users), 200
 
 #endpoint to get user data
-@app.route('/user/<int:user_id>', methods=['GET'])
+@users_bp.route('<int:user_id>', methods=['GET'])
 def user_by_id(user_id):
     user=db.session.get(Users, user_id)
     print(user)
     return user_schema.jsonify(user)
 
 #delete a user
-@app.route('/user/<int:user_id>', methods=['DELETE'])
+@users_bp.route('<int:user_id>', methods=['DELETE'])
 def delete_by_id(user_id):
     user=db.session.get(Users, user_id)
     db.session.delete(user)
@@ -53,7 +45,7 @@ def delete_by_id(user_id):
     return jsonify(f"A deleted user at index {user_id}")
 
 #update a user NOT BUILT
-@app.route('/user/<int:user_id>', methods=['PUT'])
+@users_bp.route('<int:user_id>', methods=['PUT'])
 def update_by_id(user_id):
     user=db.session.get(Users, user_id)
     print(user)
